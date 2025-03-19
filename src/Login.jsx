@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext } from "./AuthContext";
 
 const Login = () => {
 
@@ -26,6 +27,10 @@ const Login = () => {
         .then((response) => setUsername(response.username))
         .catch((error) => setError(error));
     }, []);
+
+    return (
+        
+    )
 
 }
 

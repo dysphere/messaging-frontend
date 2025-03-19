@@ -6,6 +6,7 @@ import Chatroom from './Chatroom'
 import Users from './Users'
 import NewChatroom from './NewChatroom'
 import ErrorPage from './ErrorPage'
+import Profile from "./Profile";
 
 const Router = () => {
     const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const Router = () => {
       {
         path: 'chatroom/new',
         element: <NewChatroom/>,
+      },
+      {
+        path: 'profile/:id',
+        element: <Profile/>
       }
     ]);
   
