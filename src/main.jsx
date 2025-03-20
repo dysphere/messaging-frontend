@@ -4,6 +4,7 @@ import { MantineProvider } from '@mantine/core';
 import { AuthProvider } from './AuthProvider.jsx'
 import Router from './Router.jsx';
 import './index.css'
+import '@mantine/core/styles.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
