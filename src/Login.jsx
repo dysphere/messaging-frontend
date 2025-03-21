@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex, TextInput, PasswordInput, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -52,10 +52,20 @@ const LoginForm = () => {
          <div>
                 <form onSubmit={handleLogin}>
                     <TextInput
-                    label="Username"/>
+                    label="Username"
+                    aria-label="Username"
+                    name="username"
+                    {...form.getInputProps('username')}
+                    key={form.key('username')}
+                    required/>
                     <PasswordInput
-                    label="Password"/>
-                    <Button>Log In</Button>
+                    label="Password"
+                    aria-label="Password"
+                    name="password"
+                    {...form.getInputProps('password')}
+                    key={form.key('password')}
+                    required/>
+                    <Button type="submit">Log In</Button>
                 </form>
             </div>
     );

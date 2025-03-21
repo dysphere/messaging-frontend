@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Button, TextInput, PasswordInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -21,7 +21,7 @@ const Signup = () => {
         try {
             event.preventDefault();
             const formData = form.getValues();
-            await fetch("https://messaging-backend.fly.dev/login",
+            await fetch("https://messaging-backend.fly.dev/signup",
                 {
                 method: "POST",
                 headers: {
@@ -42,10 +42,20 @@ return (
     <div>
         <form onSubmit={handleSignup}>
             <TextInput
-            label="Username"/>
+            label="Username"
+            aria-label="Username"
+            name="username"
+            {...form.getInputProps('username')}
+            key={form.key('username')}
+            required/>
             <PasswordInput
-            label="Password"/>
-            <Button>Sign Up</Button>
+            label="Password"
+            aria-label="Password"
+            name="password"
+            {...form.getInputProps('password')}
+            key={form.key('password')}
+            required/>
+            <Button type="submit">Sign Up</Button>
         </form>
     </div>
 );
