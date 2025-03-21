@@ -47,7 +47,7 @@ const Header = () => {
             navigate('/');
         }
         catch(err) {
-            console.error('Error Logging out', err)
+            console.error('Error Logging out', err);
         }
     };
 
