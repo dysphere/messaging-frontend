@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Header = () => {
 
     const {user, isAuth, removeAuth} = useContext(AuthContext);
+    const {profileId, username} = user;
     let navigate = useNavigate();
 
     const no_auth_links = [
@@ -16,7 +17,7 @@ const Header = () => {
     const auth_links = [
         { link: '/chatroom', label: 'Chatrooms' },
         { link: '/users', label: 'Users' },
-        { link: `/profile/${user.profileId}`, label: `Profile`},
+        { link: `/profile/${profileId}`, label: `${username}`},
     ];
 
     const no_auth_items = no_auth_links.map((link) => (

@@ -1,5 +1,9 @@
 import Header from "./Header";
 
+const ChatroomForm = () => {
+    
+}
+
 const NewChatroom = () => {
 
     return (<div>
