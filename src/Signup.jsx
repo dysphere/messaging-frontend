@@ -21,7 +21,7 @@ const Signup = () => {
         try {
             event.preventDefault();
             const formData = form.getValues();
-            await fetch("https://messaging-backend.fly.dev/signup",
+            await fetch("https://messaging-backend-m970.onrender.com/signup",
                 {
                 method: "POST",
                 headers: {

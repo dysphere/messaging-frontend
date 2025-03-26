@@ -16,7 +16,7 @@ const Header = () => {
     const auth_links = [
         { link: '/chatroom', label: 'Chatrooms' },
         { link: '/users', label: 'Users' },
-        { link: `/profile/${user.profileId}`, label: `${user.username}`},
+        { link: `/profile/${user.profileId}`, label: `Profile`},
     ];
 
     const no_auth_items = no_auth_links.map((link) => (

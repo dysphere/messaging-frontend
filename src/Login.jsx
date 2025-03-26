@@ -23,23 +23,17 @@ const LoginForm = () => {
         try {
             event.preventDefault();
             const formData = form.getValues();
-            await fetch("https://messaging-backend.fly.dev/login",
+            const response = await fetch("https://messaging-backend-m970.onrender.com/login",
                 {
                 method: "POST",
-                credentials: 'include',
                 headers: {
                     "Content-Type": "application/json",
                   },
                 body: JSON.stringify(formData),
                 }
             );
-            const user_response = await fetch("https://messaging-backend.fly.dev/user",
-                {
-                    credentials: 'include',
-                }
-            );
-            const user_data = user_response.json();
-            addAuth(user_data);
+            const data = await response.json();
+            addAuth(data.token);
             navigate("/chatroom");
 
         }

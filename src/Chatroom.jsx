@@ -15,6 +15,9 @@ const MainChatroom = () => {
 }
 
 const ChatroomPage = () => {
+
+const {user, isAuth} = useContext(AuthContext);
+
 return (
     <div>
         <Header></Header>
