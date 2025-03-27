@@ -1,7 +1,9 @@
 import Header from "./Header";
 
+const UserCheckbox = () => {}
+
 const ChatroomForm = () => {
-    
+
 }
 
 const NewChatroom = () => {

@@ -35,7 +35,7 @@ const UsersPage = () => {
             }
             return response.json();
           })
-          .then((response) => {setUsers(response.users); console.log(response.users);})
+          .then((response) => {setUsers(response.users);})
           .catch((error) => setError(error))
           .finally(() => setLoading(false));
         }
