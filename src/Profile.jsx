@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { useParams } from "react-router-dom";
+import { Button, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import Header from "./Header";
 
 const ProfileMain = () => {
@@ -9,6 +11,7 @@ const ProfileMain = () => {
     const {user, token} = useContext(AuthContext);
     const [profile, setProfile] = useState({});
     const [profileUser, setProfileUser] = useState("");
+    const [edit, setEdit] = useState(false);
     const [error, setError] = useState(false);
     const [load, setLoading] = useState(true);
 
@@ -28,11 +31,48 @@ const ProfileMain = () => {
           .finally(() => setLoading(false));
       }, [params.id, token]);
 
+     const form = useForm({
+            mode: 'uncontrolled',
+            initialValues: {
+              bio: '',
+            },
+        
+          });
+
+    const ProfileEdit = () => {
+    setEdit(true);
+}
+
+    const CancelProfileEdit = () => {
+    setEdit(false);
+    }
+
+    const handleProfileEdit = async (event, id) => {
+        try {
+        event.preventDefault();
+        const profile = await fetch(`https://messaging-backend-m970.onrender.com/profile/${id}/update`);
+        }
+        catch(err) {
+            console.error('Error editing profile', err);
+        }
+    }
+
     return (
         <div>
-            <p>{profileUser.username}</p>
-            <p>{profile.bio}</p>
-            {}
+            <p>Username: {profileUser.username}</p>
+            {edit ? <div>
+                 <form onSubmit={handleProfileEdit}>
+                            <TextInput
+                            label="Bio"
+                            aria-label="Bio"
+                            name="bio"
+                            {...form.getInputProps('bio')}
+                            key={form.key('bio')}/>
+                            <Button onClick={CancelProfileEdit}>Cancel</Button>
+                            <Button type="submit">Edit Profile</Button>
+                        </form>
+            </div> : <p>Bio: {profile.bio}</p>}
+            {profileUser.id === user.id && !edit ? <div><Button onClick={ProfileEdit}>Edit Profile</Button></div> : null}
         </div>
     );
 }
