@@ -26,7 +26,7 @@ export const AuthProvider = ({children}) => {
             }
         )
           .then((response) => response.json())
-          .then((response) => setUser(response))
+          .then((response) => setUser(response.user))
           .catch((error) => console.error(error));
     }
       }, [isAuth, token]);
