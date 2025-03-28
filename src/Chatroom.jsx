@@ -4,18 +4,27 @@ import Header from "./Header";
 import { Link } from "react-router-dom";
 import { Button } from "@mantine/core";
 
-const ChatroomUsers = ({user}) => {
+const ChatroomUser = ({user}) => {
     return (
-        <div><p>{user}</p></div>
+        <div>
+            <p>{user.username}</p>
+        </div>
     );
 }
 
-const Chatroom = ({id, GoChatroom}) => {
+const ChatroomUsers = ({users}) => {
+    return (<div>
+        {users.map((user, index) => (
+            <ChatroomUser key={index} user={user}/>
+        ))}
+    </div>);
+}
+
+const Chatroom = ({users, openChatroom}) => {
 return (
     <div>
-        <p>{id}</p>
-        <p></p>
-        <Button onClick={GoChatroom}>Chat</Button>
+        <ChatroomUsers users={users}/>
+        <Button onClick={openChatroom}>Chat</Button>
     </div>
 );
 }
@@ -25,6 +34,7 @@ const Chatrooms = () => {
     const {token, user} = useContext(AuthContext);
 
     const [chats, setChats] = useState([]);
+    const [activeChat, setActiveChat] = useState(null);
     const [error, setError] = useState(null);
     const [load, setLoading] = useState(true);
 
@@ -46,17 +56,38 @@ const Chatrooms = () => {
             }
           }, [token]);
 
-    return (<div>
+    useEffect(() => {
+    if (token) {
+    fetch(`https://messaging-backend-m970.onrender.com/messages`, 
+        { headers: {
+            'Authorization': `Bearer ${token}`
+            }, })
+        .then((response) => {
+        if (response.status >= 400) {
+            throw new Error("server error");
+        }
+        return response.json();
+        })
+        .then((response) => {setChats(response.chatrooms);})
+        .catch((error) => setError(error))
+        .finally(() => setLoading(false));
+    }
+    }, [token]);
 
+    function ChatroomOpen(id) {
+        setActiveChat(id);
+    }
+
+
+    const chatrooms = !error && !load && chats ? chats.map((chat) => (
+        <div key={chat.id}>
+           <Chatroom id={chat.id} users={chat.user} openChatroom={() => {ChatroomOpen()}}/>
+        </div>
+    )) : null;
+
+    return (<div>
+        {chatrooms}
     </div>);
-
-}
-
-const MainChatroom = () => {
-
-    return (<div>
-
-        </div>);
 
 }
 
@@ -68,7 +99,6 @@ return (
     <div>
         <Header></Header>
         <Chatrooms></Chatrooms>
-        <MainChatroom></MainChatroom>
         <Link to="/chatroom/new">New Chatroom</Link>
     </div>
 )
