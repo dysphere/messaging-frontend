@@ -2,7 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import Header from "./Header";
 import { Link } from "react-router-dom";
-import { Button } from "@mantine/core";
+import { Button, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 
 const ChatroomUser = ({user}) => {
     return (
@@ -29,12 +30,36 @@ return (
 );
 }
 
+const Message = ({message}) => {
+const {token, user} = useContext(AuthContext);
+
+return (<div>
+    <p>{message}</p>
+</div>);
+}
+
+const MainChatroom = ({id, messages}) => {
+
+    const {token, user} = useContext(AuthContext);
+
+    return (<div>
+        {messages.map((message, index) => (
+            <Message key={index} message={message}/>
+        ))}
+        <form>
+            <TextInput/>
+            <Button></Button>
+        </form>
+    </div>);
+}
+
 const Chatrooms = () => {
 
     const {token, user} = useContext(AuthContext);
 
     const [chats, setChats] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
+    const [messages, setMessages] = useState([]);
     const [error, setError] = useState(null);
     const [load, setLoading] = useState(true);
 
@@ -50,15 +75,15 @@ const Chatrooms = () => {
                 }
                 return response.json();
               })
-              .then((response) => {setChats(response.chatrooms); console.log(response.chatrooms);})
+              .then((response) => {setChats(response.chatrooms);})
               .catch((error) => setError(error))
               .finally(() => setLoading(false));
             }
           }, [token]);
 
     useEffect(() => {
-    if (token) {
-    fetch(`https://messaging-backend-m970.onrender.com/messages`, 
+    if (token && activeChat) {
+    fetch(`https://messaging-backend-m970.onrender.com/messages/chat/${activeChat}`, 
         { headers: {
             'Authorization': `Bearer ${token}`
             }, })
@@ -68,11 +93,11 @@ const Chatrooms = () => {
         }
         return response.json();
         })
-        .then((response) => {setChats(response.chatrooms);})
+        .then((response) => {setMessages(response.chatmessages);})
         .catch((error) => setError(error))
         .finally(() => setLoading(false));
     }
-    }, [token]);
+    }, [token, activeChat]);
 
     function ChatroomOpen(id) {
         setActiveChat(id);
@@ -81,7 +106,7 @@ const Chatrooms = () => {
 
     const chatrooms = !error && !load && chats ? chats.map((chat) => (
         <div key={chat.id}>
-           <Chatroom id={chat.id} users={chat.user} openChatroom={() => {ChatroomOpen()}}/>
+           <Chatroom id={chat.id} users={chat.user} openChatroom={() => {ChatroomOpen(chat.id)}}/>
         </div>
     )) : null;
 
