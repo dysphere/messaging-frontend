@@ -18,6 +18,7 @@ const User = ({username, addChatroom, profileId}) => {
 const UsersPage = () => {
 
     const {token} = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
@@ -42,12 +43,13 @@ const UsersPage = () => {
       }, [token]);
 
       async function addSmallChat(id) {
-        const chat = await fetch(`https://messaging-backend-m970.onrender.com/messages/chat/${id}/new`, 
+        await fetch(`https://messaging-backend-m970.onrender.com/messages/chat/${id}/new`, 
             { 
                 method: 'POST',
                 headers: {
                 'Authorization': `Bearer ${token}`
-              }, })
+              }, });
+        navigate("/chatroom");
       }
 
       const userscards = !error && !load && users ? users.map((user) => (
