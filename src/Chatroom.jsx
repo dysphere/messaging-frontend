@@ -48,7 +48,7 @@ const MainChatroom = ({id, messages}) => {
         ))}
         <form>
             <TextInput/>
-            <Button></Button>
+            <Button>Message</Button>
         </form>
     </div>);
 }
@@ -112,6 +112,7 @@ const Chatrooms = () => {
 
     return (<div>
         {chatrooms}
+        {activeChat ? <MainChatroom id={activeChat} messages={messages}/> : <div></div>}
     </div>);
 
 }
