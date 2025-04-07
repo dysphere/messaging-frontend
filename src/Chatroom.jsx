@@ -30,8 +30,8 @@ return (
 );
 }
 
-const Message = ({message, username, date, handleDeleteMessage, handleEditChange, handleCancelEdit, handleEdit, isEdit}) => {
-const {user} = useContext(AuthContext);
+const Message = ({id, message, username, date, handleDeleteMessage, handleEditChange, handleCancelEdit, finishSubmit, isEdit}) => {
+const {user, token} = useContext(AuthContext);
 
 const form = useForm({
     mode: 'uncontrolled',
@@ -41,8 +41,28 @@ const form = useForm({
 
   });
 
+  async function handleEditSubmit(id) {
+    try {
+        const formData = form.getValues();
+        await fetch(`https://messaging-backend-m970.onrender.com/messages/${id}/update`,
+            {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            body: JSON.stringify(formData),
+            }
+        );
+
+    }
+    catch(err) {
+        console.error('Error deleting message', err);
+    }
+}
+
 return (<div>
-    {!isEdit ? <p>{message}</p> : <form onSubmit={(e) => {e.preventDefault; handleEdit}}>
+    {!isEdit ? <p>{message}</p> : <form onSubmit={(e) => {e.preventDefault(); handleEditSubmit(id); handleCancelEdit;}}>
          <TextInput
                     aria-label="content"
                     name="content"
@@ -156,24 +176,6 @@ const Chatrooms = () => {
         setMessages(updatedMessages);
     }
 
-    async function handleEditSubmit(id) {
-        try {
-            await fetch(`https://messaging-backend-m970.onrender.com/messages/${id}/update`,
-                {
-                method: "UPDATE",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                  },
-                }
-            );
-
-        }
-        catch(err) {
-            console.error('Error deleting message', err);
-        }
-    }
-
     async function deleteMessage(id) {
         try {
             await fetch(`https://messaging-backend-m970.onrender.com/messages/${id}/delete`,
@@ -201,9 +203,9 @@ const Chatrooms = () => {
     return (<div>
         {chatrooms}
         {activeChat ? <div>
-        {messages.map((message, index) => (
-            <Message key={index} message={message.content} username={message.user.username} date={message.createdAt}
-            handleCancelEdit={() => cancelEdit(message.id)} handleEdit={() => handleEditSubmit(message.id)}
+        {messages.map((message) => (
+            <Message key={message.id} id={message.id} message={message.content} username={message.user.username} date={message.createdAt}
+            handleCancelEdit={() => cancelEdit(message.id)} 
             handleEditChange={() => editMessageStatus(message.id)} handleDeleteMessage={() => deleteMessage(message.id)}
             isEdit={message.isEdit}/>
         ))}
