@@ -62,7 +62,7 @@ const form = useForm({
 }
 
 return (<div>
-    {!isEdit ? <p>{message}</p> : <form onSubmit={(e) => {e.preventDefault(); handleEditSubmit(id); handleCancelEdit;}}>
+    {!isEdit ? <p>{message}</p> : <form onSubmit={async (e) => {e.preventDefault(); await handleEditSubmit(id); handleCancelEdit(id);}}>
          <TextInput
                     aria-label="content"
                     name="content"
