@@ -38,21 +38,6 @@ return (<div>
 </div>);
 }
 
-const MainChatroom = ({id, messages}) => {
-
-    const {token, user} = useContext(AuthContext);
-
-    return (<div>
-        {messages.map((message, index) => (
-            <Message key={index} message={message}/>
-        ))}
-        <form>
-            <TextInput/>
-            <Button>Message</Button>
-        </form>
-    </div>);
-}
-
 const Chatrooms = () => {
 
     const {token, user} = useContext(AuthContext);
@@ -93,7 +78,7 @@ const Chatrooms = () => {
         }
         return response.json();
         })
-        .then((response) => {setMessages(response.chatmessages);})
+        .then((response) => {setMessages(response.chatmessages); console.log(response.chatmessages);})
         .catch((error) => setError(error))
         .finally(() => setLoading(false));
     }
@@ -103,6 +88,33 @@ const Chatrooms = () => {
         setActiveChat(id);
     }
 
+    const form = useForm({
+        mode: 'uncontrolled',
+        initialValues: {
+          content: '',
+        },
+    
+      });
+
+    async function createMessage(activeChat, token) {
+        try {
+            const formData = form.getValues();
+            await fetch(`https://messaging-backend-m970.onrender.com/messages/chat/${activeChat}/message`,
+                {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                body: JSON.stringify(formData),
+                }
+            );
+
+        }
+        catch(err) {
+            console.error('Error posting message', err);
+        }
+    }
 
     const chatrooms = !error && !load && chats ? chats.map((chat) => (
         <div key={chat.id}>
@@ -112,7 +124,18 @@ const Chatrooms = () => {
 
     return (<div>
         {chatrooms}
-        {activeChat ? <MainChatroom id={activeChat} messages={messages}/> : <div></div>}
+        {activeChat ? <div>
+        {messages.map((message, index) => (
+            <Message key={index} message={message.content}/>
+        ))}
+        <form onSubmit={(e) => {e.preventDefault; createMessage(activeChat, token);}}>
+            <TextInput
+            name="content"
+            {...form.getInputProps('content')}
+            key={form.key('content')}/>
+            <Button type="submit">Message</Button>
+        </form>
+    </div> : <div></div>}
     </div>);
 
 }
