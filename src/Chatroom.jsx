@@ -30,18 +30,38 @@ return (
 );
 }
 
-const Message = ({message}) => {
-const {token, user} = useContext(AuthContext);
+const Message = ({message, username, date, handleDeleteMessage, handleEditChange, handleCancelEdit, handleEdit, isEdit}) => {
+const {user} = useContext(AuthContext);
+
+const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: {
+      content: message,
+    },
+
+  });
 
 return (<div>
-    <p>{message}</p>
+    {!isEdit ? <p>{message}</p> : <form onSubmit={(e) => {e.preventDefault; handleEdit}}>
+         <TextInput
+                    aria-label="content"
+                    name="content"
+                    {...form.getInputProps('content')}
+                    key={form.key('content')}/>
+                    <Button onClick={handleCancelEdit}>Cancel</Button>
+                    <Button type="submit">Submit</Button></form>}
+    <p>{username}</p>
+    <p>{date}</p>
+    {username === user.username && !isEdit ? <div>
+        <Button onClick={handleEditChange}>Edit</Button>
+        <Button onClick={handleDeleteMessage}>Delete</Button>
+    </div> : null}
 </div>);
 }
 
 const Chatrooms = () => {
 
     const {token, user} = useContext(AuthContext);
-
     const [chats, setChats] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -78,7 +98,7 @@ const Chatrooms = () => {
         }
         return response.json();
         })
-        .then((response) => {setMessages(response.chatmessages); console.log(response.chatmessages);})
+        .then((response) => {response.chatmessages.forEach((message) => message.idEdit = false); setMessages(response.chatmessages);})
         .catch((error) => setError(error))
         .finally(() => setLoading(false));
     }
@@ -116,6 +136,62 @@ const Chatrooms = () => {
         }
     }
 
+    function editMessageStatus(id) {
+        const updatedMessages = messages.map((message) => {
+            if (message.id === id) {
+                return { ...message, isEdit: true };
+            }
+            return message;
+        });
+        setMessages(updatedMessages);
+    }
+
+    function cancelEdit(id) {
+        const updatedMessages = messages.map((message) => {
+            if (message.id === id) {
+                return { ...message, isEdit: false };
+            }
+            return message;
+        });
+        setMessages(updatedMessages);
+    }
+
+    async function handleEditSubmit(id) {
+        try {
+            await fetch(`https://messaging-backend-m970.onrender.com/messages/${id}/update`,
+                {
+                method: "UPDATE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+            );
+
+        }
+        catch(err) {
+            console.error('Error deleting message', err);
+        }
+    }
+
+    async function deleteMessage(id) {
+        try {
+            await fetch(`https://messaging-backend-m970.onrender.com/messages/${id}/delete`,
+                {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+            );
+
+        }
+        catch(err) {
+            console.error('Error deleting message', err);
+        }
+    }
+
     const chatrooms = !error && !load && chats ? chats.map((chat) => (
         <div key={chat.id}>
            <Chatroom id={chat.id} users={chat.user} openChatroom={() => {ChatroomOpen(chat.id)}}/>
@@ -126,7 +202,10 @@ const Chatrooms = () => {
         {chatrooms}
         {activeChat ? <div>
         {messages.map((message, index) => (
-            <Message key={index} message={message.content}/>
+            <Message key={index} message={message.content} username={message.user.username} date={message.createdAt}
+            handleCancelEdit={() => cancelEdit(message.id)} handleEdit={() => handleEditSubmit(message.id)}
+            handleEditChange={() => editMessageStatus(message.id)} handleDeleteMessage={() => deleteMessage(message.id)}
+            isEdit={message.isEdit}/>
         ))}
         <form onSubmit={(e) => {e.preventDefault; createMessage(activeChat, token);}}>
             <TextInput
