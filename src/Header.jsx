@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
 
-    const {user, isAuth, removeAuth} = useContext(AuthContext);
+    const {user, token, isAuth, removeAuth} = useContext(AuthContext);
     let navigate = useNavigate();
 
     const no_auth_links = [
@@ -35,14 +35,6 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch("https://messaging-backend.fly.dev/logout",
-                {method: 'POST'}
-            );
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-
             removeAuth();
             navigate('/');
         }
@@ -60,7 +52,9 @@ return (
             <div>
                 <Link to="/">Home</Link>
             </div>
-            <Group>{auth_items}</Group>
+            <Group>{auth_items}
+            <Button onClick={handleLogout}>Log Out</Button>
+            </Group>
         </Flex>
     </Container>
 </header> : 
