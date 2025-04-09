@@ -1,15 +1,19 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import Header from "./Header";
-import { Checkbox, Button } from "@mantine/core";
+import { Checkbox, Button, Group } from "@mantine/core";
+import { useForm } from '@mantine/form';
+import { useNavigate } from "react-router-dom";
 
-const UserCheckbox = ({id, username}) => {
+const UserCheckbox = ({id, username, form}) => {
+
     return (
         <Checkbox
         label={username}
         name="user"
         id={username}
-        value={id}
+        value={id.toString()}
+        {...form.getInputProps('users', { type: 'checkbox' })}
       />
     );
 }
@@ -21,6 +25,8 @@ const ChatroomForm = () => {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [load, setLoading] = useState(true);
+
+    let navigate = useNavigate();
 
      useEffect(() => {
             if (token) {
@@ -40,21 +46,54 @@ const ChatroomForm = () => {
             }
           }, [token]);
 
+          const form = useForm({
+            mode: 'uncontrolled',
+            initialValues: {
+              users: [],
+            },
+        
+          });
+
     const userscheckboxes = !error && !load && users ? users.map((user) => (
         <div key={user.id}>
             <UserCheckbox
             id={user.id}
             username={user.username}
+            form={form}
             />
         </div>
     )) : null;
 
-    const handleNewChatroom = () => {}
+    const handleNewChatroom = async () => {
+        try {
+            const formData = form.getValues();
+            const selectedUsers = formData.users.map(Number);
+            await fetch(`https://messaging-backend-m970.onrender.com/messages/chat/new`,
+                {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                body: JSON.stringify({ user: selectedUsers }),
+                }
+            );
+            navigate("/chatroom");
+    
+        }
+        catch(err) {
+            console.error('Error creating new chatroom', err);
+        }
+    }
 
     return (<div>
-        <form onSubmit={handleNewChatroom}>
+        <form onSubmit={async (e) => {e.preventDefault(); await handleNewChatroom();}}>
+        <Checkbox.Group
+        {...form.getInputProps('users')}
+      >
             {userscheckboxes}
-            <Button>New Chatroom</Button>
+            </Checkbox.Group>
+            <Button type="submit">New Chatroom</Button>
         </form>
     </div>);
 }
