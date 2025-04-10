@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import Header from "./Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
@@ -199,6 +199,24 @@ const Chatrooms = () => {
         }
     }
 
+    async function deleteChat(id) {
+        try {
+            await fetch(`https://messaging-backend-m970.onrender.com/messages/chat/${id}/delete`,
+                {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+            );
+
+        }
+        catch(err) {
+            console.error('Error deleting chatroom', err);
+        }
+    }
+
     const chatrooms = !error && !load && chats ? chats.map((chat) => (
         <div key={chat.id} className="flex justify-center p-4 border-1">
            <Chatroom id={chat.id} users={chat.user} openChatroom={() => {ChatroomOpen(chat.id)}}/>
@@ -225,6 +243,9 @@ const Chatrooms = () => {
             key={form.key('content')}/>
             <Button type="submit">Message</Button>
         </form>
+        <div className="flex justify-end">
+        <Button onClick={() => deleteChat(activeChat)}>Delete Chatroom</Button>
+        </div>
     </div> : <div className="w-1/2"><p>Currently no active chats!</p></div>}
     </div>);
 
