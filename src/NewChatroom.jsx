@@ -20,7 +20,7 @@ const UserCheckbox = ({id, username, form}) => {
 
 const ChatroomForm = () => {
 
-    const {token} = useContext(AuthContext);
+    const {token, user} = useContext(AuthContext);
 
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
@@ -40,7 +40,7 @@ const ChatroomForm = () => {
                 }
                 return response.json();
               })
-              .then((response) => {setUsers(response.users);})
+              .then((response) => {const filteredUsers = response.users.filter((person) => person.username != user.username); setUsers(filteredUsers);})
               .catch((error) => setError(error))
               .finally(() => setLoading(false));
             }

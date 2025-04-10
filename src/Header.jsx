@@ -48,7 +48,7 @@ return (
 {isAuth ? 
 <header>
     <Container fluid>
-        <Flex>
+        <Flex className="flex justify-around">
             <div>
                 <Link to="/">Home</Link>
             </div>
@@ -60,7 +60,7 @@ return (
 </header> : 
 <header>
     <Container fluid>
-        <Flex>
+        <Flex className="flex justify-around">
             <div>
                 <Link to="/">Home</Link>
             </div>

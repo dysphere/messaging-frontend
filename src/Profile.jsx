@@ -47,10 +47,19 @@ const ProfileMain = () => {
     setEdit(false);
     }
 
-    const handleProfileEdit = async (event, id) => {
+    const handleProfileEdit = async (id) => {
         try {
-        event.preventDefault();
-        const profile = await fetch(`https://messaging-backend-m970.onrender.com/profile/${id}/update`);
+        const formData = form.getValues();
+        await fetch(`https://messaging-backend-m970.onrender.com/profile/${id}/update`,
+            {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            body: JSON.stringify(formData),
+            });
+            
         }
         catch(err) {
             console.error('Error editing profile', err);
@@ -61,7 +70,7 @@ const ProfileMain = () => {
         <div>
             <p>Username: {profileUser.username}</p>
             {edit ? <div>
-                 <form onSubmit={handleProfileEdit}>
+                 <form onSubmit={(e) => {e.preventDefault(); handleProfileEdit(params.id);}}>
                             <TextInput
                             label="Bio"
                             aria-label="Bio"

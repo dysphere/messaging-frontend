@@ -100,7 +100,12 @@ const Chatrooms = () => {
                 }
                 return response.json();
               })
-              .then((response) => {setChats(response.chatrooms);})
+              .then((response) => { const filteredChatrooms = response.chatrooms.map(chatroom => {
+                return {
+                  ...chatroom,
+                  user: chatroom.user.filter(person => person.username !== user.username),
+                };
+              }); setChats(filteredChatrooms);})
               .catch((error) => setError(error))
               .finally(() => setLoading(false));
             }
