@@ -67,7 +67,7 @@ const ProfileMain = () => {
     }
 
     return (
-        <div>
+        <div className="flex flex-col items-center">
             <p>Username: {profileUser.username}</p>
             {edit ? <div>
                  <form onSubmit={(e) => {e.preventDefault(); handleProfileEdit(params.id);}}>

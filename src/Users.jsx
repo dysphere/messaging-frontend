@@ -8,7 +8,7 @@ const User = ({username, addChatroom, profileId}) => {
     const profileLink = `/profile/${profileId}`
 
     return (
-        <div>
+        <div className="flex flex-col border-1 p-4 gap-2">
             <Link to={profileLink}>{username}</Link>
             <Button onClick={addChatroom}>Message</Button>
         </div>
@@ -64,7 +64,7 @@ const UsersPage = () => {
     return (
         <div>
             <Header></Header>
-            <div>{userscards}</div>
+            <div className="flex flex-col items-center gap-2">{userscards}</div>
         </div>
     );
 }

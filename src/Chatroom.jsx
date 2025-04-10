@@ -61,7 +61,7 @@ const form = useForm({
     }
 }
 
-return (<div>
+return (<div className="flex flex-col border-1 p-2">
     {!isEdit ? <p>{message}</p> : <form onSubmit={async (e) => {e.preventDefault(); await handleEditSubmit(id); handleCancelEdit(id);}}>
          <TextInput
                     aria-label="content"
@@ -200,20 +200,24 @@ const Chatrooms = () => {
     }
 
     const chatrooms = !error && !load && chats ? chats.map((chat) => (
-        <div key={chat.id}>
+        <div key={chat.id} className="flex justify-center p-4 border-1">
            <Chatroom id={chat.id} users={chat.user} openChatroom={() => {ChatroomOpen(chat.id)}}/>
         </div>
     )) : null;
 
-    return (<div>
+    return (<div className="flex gap-10 justify-center">
+        <div className="flex flex-col gap-2 w-1/2">
         {chatrooms}
-        {activeChat ? <div>
+        </div>
+        {activeChat ? <div className="flex flex-col w-1/2">
+            <div className="flex flex-col gap-2">
         {messages.map((message) => (
             <Message key={message.id} id={message.id} message={message.content} username={message.user.username} date={message.createdAt}
             handleCancelEdit={() => cancelEdit(message.id)} 
             handleEditChange={() => editMessageStatus(message.id)} handleDeleteMessage={() => deleteMessage(message.id)}
             isEdit={message.isEdit}/>
         ))}
+        </div>
         <form onSubmit={(e) => {e.preventDefault; createMessage(activeChat, token);}}>
             <TextInput
             name="content"
@@ -221,7 +225,7 @@ const Chatrooms = () => {
             key={form.key('content')}/>
             <Button type="submit">Message</Button>
         </form>
-    </div> : <div></div>}
+    </div> : <div className="w-1/2"><p>Currently no active chats!</p></div>}
     </div>);
 
 }
@@ -233,8 +237,8 @@ const {user, isAuth} = useContext(AuthContext);
 return (
     <div>
         <Header></Header>
+        <Link to="/chatroom/new"><p className="text-center">New Chatroom</p></Link>
         <Chatrooms></Chatrooms>
-        <Link to="/chatroom/new">New Chatroom</Link>
     </div>
 )
 }

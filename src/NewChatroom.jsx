@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import Header from "./Header";
-import { Checkbox, Button, Group } from "@mantine/core";
+import { Checkbox, Button, Flex } from "@mantine/core";
 import { useForm } from '@mantine/form';
 import { useNavigate } from "react-router-dom";
 
@@ -86,7 +86,7 @@ const ChatroomForm = () => {
         }
     }
 
-    return (<div>
+    return (<div className="flex flex-row justify-center">
         <form onSubmit={async (e) => {e.preventDefault(); await handleNewChatroom();}}>
         <Checkbox.Group
         {...form.getInputProps('users')}

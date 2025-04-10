@@ -39,7 +39,7 @@ const Signup = () => {
     }
 
 return (
-    <div>
+    <div className='flex justify-center'>
         <form onSubmit={handleSignup}>
             <TextInput
             label="Username"
